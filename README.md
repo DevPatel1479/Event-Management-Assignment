@@ -64,6 +64,20 @@ Server will start at:
 Once the server starts, visit [http://127.0.0.1:8000/](http://127.0.0.1:8000/)  
 to view the JSON welcome message that lists all key API endpoints.
 
+### 7️⃣ Run Test Cases
+You can test all Django apps or a specific test file like test.py using the following commands:
+
+✅ Run All Tests in the Project
+```bash
+python manage.py test
+```
+
+✅ Run Tests in a Specific App
+```bash
+python manage.py test events
+```
+
+
 ### 🧪 API Endpoint Testing Guide
 
 This section helps you test each API step-by-step — from authentication to event, RSVP, and review management.
