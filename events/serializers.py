@@ -23,3 +23,14 @@ class RSVPSerializer(serializers.ModelSerializer):
         model = RSVP
         fields = ['id', 'user', 'event', 'status']
         read_only_fields = ['id', 'user', 'event']
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    user = serializers.ReadOnlyField(source='user.username')
+
+    class Meta:
+        model = Review
+        fields = '__all__'
+        extra_kwargs = {
+            'event': {'required': False}  # 👈 make event optional
+        }

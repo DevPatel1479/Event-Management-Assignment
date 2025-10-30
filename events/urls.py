@@ -9,5 +9,5 @@ urlpatterns = [
     path('', include(router.urls)),
     path('events/<int:event_id>/rsvp/', RSVPViewSet.as_view({'post': 'create'})),
     path('events/<int:event_id>/rsvp/<int:user_id>/', RSVPUpdateView.as_view(), name='rsvp-update'),
-
+    
 ]
