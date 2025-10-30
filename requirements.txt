@@ -1,0 +1,19 @@
+# Core Django and DRF
+Django>=4.2,<5.0
+djangorestframework>=3.14.0
+
+# Authentication
+djangorestframework-simplejwt>=5.3.0
+
+# Celery for async tasks
+celery>=5.3.0
+django-celery-beat>=2.6.0
+django-celery-results>=2.5.0
+kombu>=5.3.0
+
+# Database and ORM tools
+SQLAlchemy>=2.0.0
+
+# Image handling
+Pillow>=10.0.0
+
