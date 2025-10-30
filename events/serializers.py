@@ -16,3 +16,10 @@ class EventSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class RSVPSerializer(serializers.ModelSerializer):
+    user = serializers.ReadOnlyField(source='user.username')
+
+    class Meta:
+        model = RSVP
+        fields = ['id', 'user', 'event', 'status']
+        read_only_fields = ['id', 'user', 'event']
