@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from rest_framework import viewsets, generics, permissions
 from django.db.models import Q
 from rest_framework.pagination import PageNumberPagination
@@ -7,6 +8,39 @@ from .serializers import EventSerializer, RSVPSerializer, ReviewSerializer
 from .permissions import IsOrganizerOrInvitedOrReadOnly
 from .tasks import send_event_email
 
+
+
+from django.http import JsonResponse
+
+def home(request):
+    return JsonResponse({
+        "message": "Welcome to the Event Management API 🚀",
+        "available_endpoints": {
+            # 🔹 Home
+            "Home": "/",
+            
+            # 🔹 Authentication (JWT)
+            "JWT Token": "/api/token/",
+            "Refresh Token": "/api/token/refresh/",
+            
+            # 🔹 Events
+            "List Events": "/api/events/ (GET)",
+            "Create Event": "/api/events/ (POST)",
+            "Event Details": "/api/events/{id}/ (GET)",
+            "Update Event": "/api/events/{id}/ (PUT)",
+            "Delete Event": "/api/events/{id}/ (DELETE)",
+
+            # 🔹 RSVP
+            "RSVP to Event": "/api/events/{event_id}/rsvp/ (POST)",
+            "Update RSVP Status": "/api/events/{event_id}/rsvp/{user_id}/ (PATCH)",
+
+            # 🔹 Reviews
+            "List Reviews for Event": "/api/events/{event_id}/reviews/ (GET)",
+            "Add Review for Event": "/api/events/{event_id}/reviews/ (POST)",
+        },
+        "note": "Use POST on /api/token/ with username and password to get access and refresh tokens.",
+        
+    })
 
 # ================================================
 # Custom Pagination for Events
@@ -27,7 +61,7 @@ class EventViewSet(viewsets.ModelViewSet):
     serializer_class = EventSerializer
     permission_classes = [IsOrganizerOrInvitedOrReadOnly]  # Custom permission: organizers or invited users can modify
     pagination_class = EventPagination  # Use custom pagination defined above
-
+    
     def get_queryset(self):
         """
         Returns filtered event list depending on the user's authentication status:
@@ -36,21 +70,17 @@ class EventViewSet(viewsets.ModelViewSet):
         """
         user = self.request.user
 
-        # If user is viewing all events
-        if self.action == 'list':
-            if user.is_authenticated:
-                # Authenticated users can see their own, invited, or public events
-                return Event.objects.filter(
-                    Q(is_public=True) | 
-                    Q(organizer=user) | 
-                    Q(invited_users=user)
-                ).distinct().order_by('-created_at')
-            else:
-                # Non-logged-in users can only see public events
-                return Event.objects.filter(is_public=True).order_by('-created_at')
+        if user.is_authenticated:
+            # Authenticated users can see their own, invited, or public events
+            return Event.objects.filter(
+                Q(is_public=True) |
+                Q(organizer=user) |
+                Q(invited_users=user)
+            ).distinct().order_by('-created_at')
+        else:
+            # Non-logged-in users can only see public events
+            return Event.objects.filter(is_public=True).order_by('-created_at')
 
-        # For specific event detail view, return all (permission class will control access)
-        return Event.objects.all().order_by('-created_at')
 
     def perform_create(self, serializer):
         """
