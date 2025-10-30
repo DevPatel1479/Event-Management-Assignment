@@ -262,7 +262,7 @@ Content-Type: application/json
 Request Body:
 ```bash
 {
-  "status": "Going"  // or use any out of this  ("Going", "Maybe", "Not Going")
+  "status": "Maybe"  // or use any out of this  ("Going", "Maybe", "Not Going")
 }
 ```
 
