@@ -70,8 +70,6 @@ This section helps you test each API step-by-step — from authentication to eve
 
 ### 🔐 1️⃣ Obtain JWT Token (Authentication)
 
-🔐 1️⃣ Obtain JWT Token (Authentication)
-
 Endpoint:
 ```bash
 POST /api/token/
