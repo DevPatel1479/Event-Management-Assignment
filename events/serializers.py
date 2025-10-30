@@ -32,5 +32,5 @@ class ReviewSerializer(serializers.ModelSerializer):
         model = Review
         fields = '__all__'
         extra_kwargs = {
-            'event': {'required': False}  # 👈 make event optional
+            'event': {'required': False}  
         }
