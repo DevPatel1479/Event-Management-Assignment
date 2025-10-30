@@ -61,3 +61,55 @@ class EventViewSet(viewsets.ModelViewSet):
         send_event_email.delay(event.id)  # Send email in background
 
 
+# ================================================
+# RSVP ViewSet
+# ================================================
+# Manages RSVP (attendance) responses for events
+class RSVPViewSet(viewsets.ModelViewSet):
+    serializer_class = RSVPSerializer
+    queryset = RSVP.objects.all()
+    permission_classes = [permissions.IsAuthenticated]  # Only logged-in users can RSVP
+
+    def perform_create(self, serializer):
+        """
+        Prevents duplicate RSVPs for the same user and event.
+        If RSVP exists → update status.
+        Else → create a new RSVP entry.
+        """
+        event_id = self.kwargs.get("event_id")
+        event = get_object_or_404(Event, id=event_id)
+
+        # Check if RSVP already exists
+        existing_rsvp = RSVP.objects.filter(event=event, user=self.request.user).first()
+        if existing_rsvp:
+            # Update existing RSVP instead of creating a duplicate
+            existing_rsvp.status = serializer.validated_data.get("status", existing_rsvp.status)
+            existing_rsvp.save()
+        else:
+            # Create a new RSVP record
+            serializer.save(user=self.request.user, event=event)
+
+    def get_queryset(self):
+        """
+        Returns all RSVPs related to a specific event.
+        """
+        event_id = self.kwargs.get("event_id")
+        return RSVP.objects.filter(event_id=event_id)
+
+
+# ================================================
+# RSVP Update View
+# ================================================
+# Handles updating RSVP status using generic UpdateAPIView
+class RSVPUpdateView(generics.UpdateAPIView):
+    serializer_class = RSVPSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        """
+        Retrieves a specific RSVP record based on event_id and user_id from URL.
+        """
+        event_id = self.kwargs['event_id']
+        user_id = self.kwargs['user_id']
+        print(user_id)  # Debugging/logging purpose
+        return get_object_or_404(RSVP, event_id=event_id, user_id=user_id)
