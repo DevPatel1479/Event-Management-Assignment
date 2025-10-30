@@ -113,3 +113,26 @@ class RSVPUpdateView(generics.UpdateAPIView):
         user_id = self.kwargs['user_id']
         print(user_id)  # Debugging/logging purpose
         return get_object_or_404(RSVP, event_id=event_id, user_id=user_id)
+
+
+
+# ================================================
+# Review ViewSet
+# ================================================
+# Handles creation and retrieval of event reviews
+class ReviewViewSet(viewsets.ModelViewSet):
+    serializer_class = ReviewSerializer
+
+    def get_queryset(self):
+        """
+        Returns all reviews associated with a specific event.
+        """
+        event_id = self.kwargs['event_id']
+        return Review.objects.filter(event_id=event_id)
+
+    def perform_create(self, serializer):
+        """
+        Automatically links review to logged-in user and event.
+        """
+        event_id = self.kwargs['event_id']
+        serializer.save(user=self.request.user, event_id=event_id)
